@@ -5,7 +5,34 @@ class TokenManager {
   private cachedToken: { token: string; expiry: number } | null = null;
 
   constructor() {
+    // Check if all required environment variables are present
+    const requiredEnvVars = [
+      'GC_TYPE', 'GC_PROJECT_ID', 'GC_PRIVATE_KEY_ID', 'GC_PRIVATE_KEY',
+      'GC_CLIENT_EMAIL', 'GC_CLIENT_ID', 'GC_AUTH_URI', 'GC_TOKEN_URI',
+      'GC_AUTH_PROVIDER_X509_CERT_URL', 'GC_CLIENT_X509_CERT_URL'
+    ];
+
+    const missingVars = requiredEnvVars.filter(varName => !process.env[varName]);
+    if (missingVars.length > 0) {
+      throw new Error(`Missing required environment variables: ${missingVars.join(', ')}`);
+    }
+
+    // Use explicit service account credentials for Vercel deployment
+    const credentials = {
+      type: process.env.GC_TYPE,
+      project_id: process.env.GC_PROJECT_ID,
+      private_key_id: process.env.GC_PRIVATE_KEY_ID,
+      private_key: process.env.GC_PRIVATE_KEY,
+      client_email: process.env.GC_CLIENT_EMAIL,
+      client_id: process.env.GC_CLIENT_ID,
+      auth_uri: process.env.GC_AUTH_URI,
+      token_uri: process.env.GC_TOKEN_URI,
+      auth_provider_x509_cert_url: process.env.GC_AUTH_PROVIDER_X509_CERT_URL,
+      client_x509_cert_url: process.env.GC_CLIENT_X509_CERT_URL,
+    };
+
     this.auth = new GoogleAuth({
+      credentials,
       scopes: ['https://www.googleapis.com/auth/cloud-platform'],
     });
   }

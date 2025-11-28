@@ -19,15 +19,19 @@ export async function POST(req: NextRequest) {
     let accessToken: string;
     try {
       accessToken = await tokenManager.getAccessToken();
+      console.log("Successfully obtained access token");
     } catch (error) {
       console.error("Failed to get access token:", error);
-      return NextResponse.json({ error: "Failed to authenticate with Google Cloud" }, { status: 401 });
+      return NextResponse.json({ 
+        error: "Failed to authenticate with Google Cloud", 
+        details: error instanceof Error ? error.message : String(error)
+      }, { status: 401 });
     }
 
     // Google Cloud/Vertex AI config
     const PROJECT_ID = process.env.GOOGLE_CLOUD_PROJECT || '';
     const LOCATION = process.env.GOOGLE_CLOUD_LOCATION || "us-central1";
-    const MODEL_VERSION = "imagen-4.0-generate-preview-06-06";
+    const MODEL_VERSION = process.env.MODEL || "imagen-3.0-fast-generate-001";
 
     if (!PROJECT_ID) {
       return NextResponse.json({ error: "Google Cloud project not configured" }, { status: 500 });
