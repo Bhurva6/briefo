@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
 export async function POST(request: NextRequest) {
   try {
@@ -14,28 +15,20 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (!process.env.PERPLEXITY_API_KEY) {
-      console.error('PERPLEXITY_API_KEY is not set in environment variables');
+    if (!process.env.GEMINI_API_KEY) {
+      console.error('GEMINI_API_KEY is not set in environment variables');
       return NextResponse.json(
         { error: 'API key not configured. Please check server configuration.' },
         { status: 500 }
       );
     }
 
-    const systemPrompt = `You are an expert BFSI (Banking, Financial Services, and Insurance) specialized marketing copywriter with years of experience creating compelling, conversion-driven copy for financial institutions. You have a deep understanding of regulatory compliance, industry terminology, and what resonates with both internal stakeholders and customers in the financial sector.
+    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
 
-Your expertise includes:
-- Creating clear, concise, and engaging copy that adheres to brand guidelines
-- Understanding the nuances of corporate communications in BFSI
-- Balancing creativity with professionalism and compliance requirements
-- Writing for diverse audiences from CXOs to frontline employees
-- Crafting messaging that builds trust and drives action
+    const userPrompt = `You are an expert marketing copywriter. Based on the following marketing brief, generate creative copy variations for a banner announcement. For each section, provide 3 different creative options that adhere to the guidelines, tone, and objectives stated in the brief.
 
-When given a brief, you extract key information and generate multiple creative copy variations for different sections of the banner/communication, ensuring each piece aligns with the stated objectives, tone, and brand requirements.`;
-
-    const userPrompt = `Based on the following marketing brief, generate creative copy variations for a banner announcement. For each section mentioned in the brief, provide 3 different creative options that adhere to the guidelines, tone, and objectives stated.
-
-Brief:
+Marketing Brief:
 ${briefContent}
 
 Department: ${department}
@@ -82,114 +75,21 @@ The JSON structure must be exactly:
 
 Requirements for the copy:
 1. Matches the tone and personality specified in the brief
-2. Is appropriate for the target audience
-3. Aligns with BFSI industry standards and compliance
-4. Is creative yet professional
-5. Drives the stated campaign objective
+2. Is appropriate for the target audience mentioned in the brief
+3. Is creative yet professional
+4. Drives the stated campaign objective from the brief
+5. Uses the call-to-action guidance from the brief
 6. STRICTLY adheres to the character and word limits specified above for each field
+7. CRITICAL: The hero_subheadline MUST be 8 words or fewer. Count the words carefully and ensure each subheadline option has exactly 8 words maximum. This is a strict requirement.
 
 Return ONLY the JSON object, nothing else.`;
 
-    console.log('Calling Perplexity API...');
-    console.log('API Key exists:', !!process.env.PERPLEXITY_API_KEY);
-    console.log('API Key starts with:', process.env.PERPLEXITY_API_KEY?.substring(0, 8));
+    console.log('Calling Gemini API...');
 
-    const response = await fetch('https://api.perplexity.ai/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${process.env.PERPLEXITY_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'llama-3.1-sonar-small-128k-chat',
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: userPrompt }
-        ],
-        temperature: 0.7,
-        max_tokens: 3000,
-      }),
-    });
+    const result = await model.generateContent(userPrompt);
+    const generatedContent = result.response.text();
 
-    if (!response.ok) {
-      const errorData = await response.text();
-      console.error('Perplexity API error status:', response.status);
-      console.error('Perplexity API error:', errorData);
-      
-      // Fallback: Generate mock data for testing
-      console.log('Using mock data fallback...');
-      const mockData = {
-        hero_headline: [
-          "Meet Your New AI Partner: ABSLI AI Copilot",
-          "Work Smarter, Not Harder with ABSLI AI Copilot",
-          "Your AI-Powered Productivity Partner is Here"
-        ],
-        hero_subheadline: [
-          "Transform your work with intelligent AI assistance.",
-          "Say goodbye to repetitive daily tasks now.",
-          "Boost productivity with adaptive AI learning."
-        ],
-        product_descriptor: [
-          "Your AI partner for emails, documents, meetings, and data analysis—all within the tools you use every day.",
-          "An intelligent copilot integrated seamlessly into Outlook, Word, Excel, and Teams to accelerate your work.",
-          "AI-powered assistance for daily tasks: from email drafting to data insights, all in one secure environment."
-        ],
-        benefits: [
-          [
-            "Summarize lengthy emails and documents into 3-5 actionable bullet points instantly",
-            "Draft and refine emails, policy notes, and announcements in your preferred tone and style",
-            "Transform rough notes and ideas into polished, presentation-ready slides",
-            "Analyze Excel data to uncover key trends and recommend next steps"
-          ],
-          [
-            "Cut through information overload—get instant summaries of long emails and documents",
-            "Write better, faster—let AI draft messages that match your voice perfectly",
-            "Create compelling presentations from your ideas in minutes, not hours",
-            "Unlock insights hidden in your data with intelligent analysis and recommendations"
-          ],
-          [
-            "Save hours weekly by getting instant summaries of complex emails and documents",
-            "Communicate with confidence—AI-powered writing that reflects your professional tone",
-            "Build impactful presentations effortlessly from your initial concepts",
-            "Make data-driven decisions faster with AI-generated insights and trends"
-          ]
-        ],
-        quick_tip: [
-          "Your data stays secure within ABSLI's protected environment—feel confident using AI Copilot with internal projects and sensitive information.",
-          "Rest assured: All your content remains within our secure ABSLI ecosystem. Use AI Copilot freely for internal work.",
-          "Security first: AI Copilot operates entirely within ABSLI's secure infrastructure—your data never leaves our protected environment."
-        ],
-        cta_primary: [
-          "Start using ABSLI AI Copilot today in Outlook, Word, Excel, and Teams. Explore its capabilities and discover how it saves you time.",
-          "Ready to transform your workday? Launch ABSLI AI Copilot now in your favorite Microsoft apps and experience the difference.",
-          "Begin your AI-powered journey today. Open ABSLI AI Copilot in Outlook, Word, Excel, or Teams and watch productivity soar."
-        ],
-        cta_secondary: [
-          "Share your success stories—let us know how AI Copilot is helping you work smarter.",
-          "Join the conversation—tell your colleagues how AI Copilot is changing your workday.",
-          "Spread the word—share tips and use cases with your team to maximize everyone's productivity."
-        ],
-        leader_closing: [
-          "I'm excited to see how you use AI Copilot to reimagine the way we work at ABSLI and unlock new levels of productivity.",
-          "This is just the beginning of our AI journey. I can't wait to see the innovative ways you'll leverage Copilot to drive excellence at ABSLI.",
-          "Together with AI Copilot, we're not just working differently—we're working better. Let's embrace this opportunity to innovate and excel."
-        ]
-      };
-      
-      return NextResponse.json({
-        success: true,
-        generatedCopy: mockData,
-        rawResponse: 'Mock data generated due to API authentication failure. Please update your Perplexity API key.',
-        warning: 'Using mock data - Perplexity API key is invalid or expired'
-      });
-    }
-
-    console.log('Perplexity API response received');
-
-    const data = await response.json();
-    const generatedContent = data.choices[0].message.content;
-
-    console.log('Raw Perplexity response:', generatedContent);
+    console.log('Raw Gemini response:', generatedContent);
 
     // Try to parse JSON from the response
     let parsedContent;

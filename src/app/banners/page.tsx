@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { Loader2 } from 'lucide-react';
 
 interface Template {
   id: string;
@@ -22,6 +23,7 @@ export default function BannersPage() {
   const router = useRouter();
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
   const [templates, setTemplates] = useState<Template[]>([]);
+  const [isGenerating, setIsGenerating] = useState(false);
 
   useEffect(() => {
     const loadTemplates = async () => {
@@ -42,6 +44,7 @@ export default function BannersPage() {
 
   const handleTemplateSelect = async (templateId: string) => {
     setSelectedTemplate(templateId);
+    setIsGenerating(true);
     // Store selected template
     sessionStorage.setItem('selectedTemplate', templateId);
 
@@ -127,6 +130,7 @@ export default function BannersPage() {
       router.push('/generate');
     } catch (error) {
       console.error('Error generating copy:', error);
+      setIsGenerating(false);
       alert(`Failed to generate copy: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   };
@@ -139,6 +143,23 @@ export default function BannersPage() {
 
   return (
     <div className="flex min-h-screen bg-zinc-50 font-sans dark:bg-black p-8">
+      {/* Loading Overlay */}
+      {isGenerating && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white dark:bg-zinc-800 rounded-xl p-8 flex flex-col items-center gap-4 shadow-2xl">
+            <Loader2 className="w-12 h-12 text-blue-600 animate-spin" />
+            <div className="text-center">
+              <h3 className="text-lg font-semibold text-black dark:text-white mb-2">
+                Generating Banner Copy
+              </h3>
+              <p className="text-zinc-600 dark:text-zinc-400 text-sm">
+                Creating copy based on your marketing brief...
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+      
       <main className="w-full max-w-7xl mx-auto">
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-center mb-2 text-black dark:text-zinc-50">

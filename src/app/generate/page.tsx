@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { FileText, ChevronDown, ChevronUp } from 'lucide-react';
 
 interface GeneratedCopy {
   hero_headline?: string[];
@@ -22,11 +23,14 @@ export default function GeneratePage() {
   const [selectedVariation, setSelectedVariation] = useState<number>(0);
   const [editedCopy, setEditedCopy] = useState<GeneratedCopy | null>(null);
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
+  const [briefContent, setBriefContent] = useState<string>('');
+  const [showBrief, setShowBrief] = useState<boolean>(false);
 
   useEffect(() => {
     const storedCopy = sessionStorage.getItem('generatedCopy');
     const storedDepartment = sessionStorage.getItem('department');
     const storedTemplate = sessionStorage.getItem('selectedTemplate');
+    const storedBrief = sessionStorage.getItem('briefContent');
     
     if (storedCopy) {
       const parsed = JSON.parse(storedCopy);
@@ -38,6 +42,9 @@ export default function GeneratePage() {
     }
     if (storedTemplate) {
       setSelectedTemplate(storedTemplate);
+    }
+    if (storedBrief) {
+      setBriefContent(storedBrief);
     }
   }, []);
 
@@ -124,6 +131,35 @@ export default function GeneratePage() {
             Department: <span className="font-semibold capitalize">{department}</span>
           </p>
         </div>
+
+        {/* Collapsible Brief Section */}
+        {briefContent && (
+          <div className="mb-8 bg-white dark:bg-zinc-800 rounded-lg border border-zinc-200 dark:border-zinc-700 overflow-hidden">
+            <button
+              onClick={() => setShowBrief(!showBrief)}
+              className="w-full px-6 py-4 flex items-center justify-between bg-zinc-50 dark:bg-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-700 transition-colors"
+            >
+              <div className="flex items-center gap-3">
+                <FileText className="w-5 h-5 text-blue-600" />
+                <span className="font-semibold text-black dark:text-white">View Marketing Brief</span>
+              </div>
+              {showBrief ? (
+                <ChevronUp className="w-5 h-5 text-zinc-500" />
+              ) : (
+                <ChevronDown className="w-5 h-5 text-zinc-500" />
+              )}
+            </button>
+            {showBrief && (
+              <div className="p-6 border-t border-zinc-200 dark:border-zinc-700 max-h-96 overflow-y-auto">
+                <div className="prose prose-sm dark:prose-invert max-w-none">
+                  <pre className="whitespace-pre-wrap text-sm text-zinc-700 dark:text-zinc-300 font-sans">
+                    {briefContent}
+                  </pre>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Variation Selector */}
         <div className="flex justify-center gap-4 mb-8">
