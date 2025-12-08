@@ -196,19 +196,19 @@ export default function PreviewPage() {
             <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-2">Quick Presets:</p>
             <div className="flex gap-2 flex-wrap">
               <button
-                onClick={() => setFontSettings(prev => ({ ...prev, headingColor: '#CB1F35', subtitleColor: '#1a1a1a' }))}
+                onClick={() => setFontSettings(prev => ({ ...prev, headingColor: '#E2001F', subtitleColor: '#1a1a1a' }))}
                 className="px-3 py-1 text-xs rounded-full bg-red-100 text-red-700 hover:bg-red-200 transition-colors"
               >
                 Red Heading
               </button>
               <button
-                onClick={() => setFontSettings(prev => ({ ...prev, headingColor: '#1a1a1a', subtitleColor: '#CB1F35' }))}
-                className="px-3 py-1 text-xs rounded-full bg-red-100 text-red-700 hover:bg-red-200 transition-colors"
+                onClick={() => setFontSettings(prev => ({ ...prev, headingColor: '#1162A2', subtitleColor: '#1a1a1a' }))}
+                className="px-3 py-1 text-xs rounded-full bg-blue-100 text-blue-700 hover:bg-blue-200 transition-colors"
               >
-                Red Subtitle
+                Blue Heading
               </button>
               <button
-                onClick={() => setFontSettings(prev => ({ ...prev, headingColor: '#ffffff', subtitleColor: '#FFF3D9' }))}
+                onClick={() => setFontSettings(prev => ({ ...prev, headingColor: '#ffffff', subtitleColor: '#FFFFFF' }))}
                 className="px-3 py-1 text-xs rounded-full bg-zinc-700 text-white hover:bg-zinc-600 transition-colors"
               >
                 Light Text

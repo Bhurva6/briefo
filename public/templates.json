@@ -4,7 +4,7 @@
       "id": "simple_banner_1",
       "canvas": { "width": 700, "height": 300, "unit": "px" },
       "background": {
-        "color": "#FFF4D6",
+        "color": "#FFFFFF",
         "image": { "enabled": true, "fit": "cover" }
       },
       "fields": {
@@ -46,7 +46,7 @@
       "id": "simple_banner_2",
       "canvas": { "width": 700, "height": 300, "unit": "px" },
       "background": {
-        "color": "#CB2035",
+        "color": "#E2001F",
         "image": { "enabled": true, "fit": "cover", "opacity": 0.2 }
       },
       "fields": {
@@ -139,7 +139,7 @@
       "canvas": { "width": 700, "height": 300, "unit": "px" },
       "background": {
         "left_color": "#FFFFFF",
-        "right_color": "#FFF0CC",
+        "right_color": "#1162A2",
         "split_x": 360,
         "image": { "enabled": true, "fit": "cover", "side": "right" }
       },

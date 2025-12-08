@@ -1,8 +1,8 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import { Loader2 } from 'lucide-react';
+import { useEffect, useState, useRef } from 'react';
+import { Loader2, Download } from 'lucide-react';
 
 interface GeneratedCopy {
   hero_headline?: string[];
@@ -49,6 +49,9 @@ export default function GenerateImagePage() {
     subtitleColor: '#4a4a4a',
     subtitleSize: 24,
   });
+
+  // Ref for banner preview for download
+  const bannerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const loadData = async () => {
@@ -194,6 +197,56 @@ export default function GenerateImagePage() {
       };
       img.src = imageDataUrl;
     });
+  };
+
+  // Download banner as PNG
+  const downloadBanner = async () => {
+    if (!bannerRef.current) return;
+    
+    const svgElement = bannerRef.current.querySelector('svg');
+    if (!svgElement) return;
+
+    try {
+      // Get SVG dimensions
+      const svgWidth = parseInt(svgElement.getAttribute('width') || '1200');
+      const svgHeight = parseInt(svgElement.getAttribute('height') || '675');
+      
+      // Clone SVG and convert images to base64
+      const clonedSvg = svgElement.cloneNode(true) as SVGElement;
+      
+      // Serialize SVG
+      const serializer = new XMLSerializer();
+      const svgString = serializer.serializeToString(clonedSvg);
+      const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+      const svgUrl = URL.createObjectURL(svgBlob);
+      
+      // Create canvas and draw SVG
+      const canvas = document.createElement('canvas');
+      canvas.width = svgWidth;
+      canvas.height = svgHeight;
+      const ctx = canvas.getContext('2d');
+      
+      if (!ctx) {
+        throw new Error('Could not get canvas context');
+      }
+      
+      const img = new Image();
+      img.onload = () => {
+        ctx.drawImage(img, 0, 0);
+        URL.revokeObjectURL(svgUrl);
+        
+        // Download as PNG
+        const pngUrl = canvas.toDataURL('image/png');
+        const link = document.createElement('a');
+        link.download = `bharti-axa-banner-${Date.now()}.png`;
+        link.href = pngUrl;
+        link.click();
+      };
+      img.src = svgUrl;
+    } catch (error) {
+      console.error('Error downloading banner:', error);
+      alert('Failed to download banner. Please try again.');
+    }
   };
 
   useEffect(() => {
@@ -372,12 +425,12 @@ export default function GenerateImagePage() {
               {showCustomBackground && (
                 <div className="mt-3 p-3 bg-teal-50 dark:bg-teal-900/20 rounded-lg border border-teal-200 dark:border-teal-700">
                   <p className="text-xs text-zinc-600 dark:text-zinc-400 mb-2">
-                    Brand colors only: #FFF3D9, #FEC736, #CB1F35
+                    Brand colors only: #FFFFFF, #1162A2, #E2001F
                   </p>
                   <textarea
                     value={customBackgroundPrompt}
                     onChange={(e) => setCustomBackgroundPrompt(e.target.value)}
-                    placeholder="e.g., Warm gradient with red accents..."
+                    placeholder="e.g., Blue gradient with red accents..."
                     className="w-full p-2 border border-teal-200 dark:border-teal-700 rounded-md text-sm bg-white dark:bg-zinc-900 text-black dark:text-white placeholder:text-zinc-400 resize-none"
                     rows={3}
                   />
@@ -400,7 +453,7 @@ export default function GenerateImagePage() {
 
           {/* CENTER - Banner Preview */}
           <div className="flex flex-col items-center">
-            <div className="bg-white dark:bg-zinc-900 rounded-lg shadow-2xl p-6 inline-block">
+            <div ref={bannerRef} className="bg-white dark:bg-zinc-900 rounded-lg shadow-2xl p-6 inline-block">
               <SimpleBannerImageTemplate
                 copy={editedCopy}
                 variation={selectedVariation}
@@ -411,6 +464,15 @@ export default function GenerateImagePage() {
                 fontSettings={fontSettings}
               />
             </div>
+            
+            {/* Download Button */}
+            <button
+              onClick={downloadBanner}
+              className="mt-4 px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition-colors flex items-center gap-2"
+            >
+              <Download className="w-5 h-5" />
+              Download Banner
+            </button>
             
             {/* Navigation Buttons */}
             <div className="mt-6 flex gap-4">
@@ -512,19 +574,19 @@ export default function GenerateImagePage() {
               <p className="text-xs text-zinc-600 dark:text-zinc-400 mb-2">Quick Presets</p>
               <div className="grid grid-cols-2 gap-2">
                 <button
-                  onClick={() => setFontSettings(prev => ({ ...prev, headingColor: '#CB1F35', subtitleColor: '#1a1a1a' }))}
+                  onClick={() => setFontSettings(prev => ({ ...prev, headingColor: '#E2001F', subtitleColor: '#1a1a1a' }))}
                   className="px-2 py-1.5 text-xs rounded bg-red-100 text-red-700 hover:bg-red-200 transition-colors"
                 >
                   Red Heading
                 </button>
                 <button
-                  onClick={() => setFontSettings(prev => ({ ...prev, headingColor: '#1a1a1a', subtitleColor: '#CB1F35' }))}
-                  className="px-2 py-1.5 text-xs rounded bg-red-100 text-red-700 hover:bg-red-200 transition-colors"
+                  onClick={() => setFontSettings(prev => ({ ...prev, headingColor: '#1162A2', subtitleColor: '#1a1a1a' }))}
+                  className="px-2 py-1.5 text-xs rounded bg-blue-100 text-blue-700 hover:bg-blue-200 transition-colors"
                 >
-                  Red Subtitle
+                  Blue Heading
                 </button>
                 <button
-                  onClick={() => setFontSettings(prev => ({ ...prev, headingColor: '#ffffff', subtitleColor: '#FFF3D9' }))}
+                  onClick={() => setFontSettings(prev => ({ ...prev, headingColor: '#ffffff', subtitleColor: '#FFFFFF' }))}
                   className="px-2 py-1.5 text-xs rounded bg-zinc-700 text-white hover:bg-zinc-600 transition-colors"
                 >
                   Light Text
@@ -646,7 +708,7 @@ function SimpleBannerImageTemplate({
           preserveAspectRatio="xMidYMid slice"
         />
       ) : (
-        <rect width={canvas.width} height={canvas.height} fill="#FFF3D9" />
+        <rect width={canvas.width} height={canvas.height} fill="#FFFFFF" />
       )}
       
       {/* Card */}

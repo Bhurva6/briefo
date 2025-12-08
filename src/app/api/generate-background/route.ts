@@ -3,22 +3,22 @@ import { tokenManager } from "@/lib/google-auth";
 
 // Brand colors for backgrounds - ONLY these three colors allowed
 const BRAND_COLORS = {
-  cream: '#FFF3D9',
-  yellow: '#FEC736',
-  red: '#CB1F35'
+  white: '#FFFFFF',
+  teal: '#1162A2',
+  red: '#E2001F'
 };
 
 // Generate different background style prompts using ONLY the three brand colors
 function getBackgroundPrompts(): string[] {
   return [
-    // Solid cream with subtle red accent at edges
-    `Create a simple, elegant background in warm cream color (hex #FFF3D9) with a very subtle red (hex #CB1F35) accent line or curve only at the very bottom edge. ONLY use these exact colors: cream #FFF3D9, golden yellow #FEC736, and red #CB1F35. No other colors allowed. The background should be plain and clean with no patterns, no complex designs, no textures in the main area. Absolutely no text, no letters, no words. Minimalist and professional. The red accent should be subtle and elegant.`,
+    // Solid white with subtle red accent at edges
+    `Create a simple, elegant background in clean white color (hex #FFFFFF) with a very subtle red (hex #E2001F) accent line or curve only at the very bottom edge. ONLY use these exact colors: white #FFFFFF, teal #1162A2, and red #E2001F. No other colors allowed. The background should be plain and clean with no patterns, no complex designs, no textures in the main area. Absolutely no text, no letters, no words. Minimalist and professional. The red accent should be subtle and elegant.`,
     
-    // Gradient from cream to yellow with red accent
-    `Create a beautiful gradient background smoothly transitioning from warm cream (#FFF3D9) to soft golden yellow (#FEC736) with a subtle red (#CB1F35) accent stripe or decorative element at the lower edge or corner. ONLY use these exact three colors: #FFF3D9, #FEC736, #CB1F35. No other colors allowed whatsoever. No patterns, no textures, no objects, and absolutely no text or typography. Keep it minimal with clean, sophisticated gradients. The red adds a professional accent touch.`,
+    // Gradient from white to teal with red accent
+    `Create a beautiful gradient background smoothly transitioning from clean white (#FFFFFF) to soft teal (#1162A2) with a subtle red (#E2001F) accent stripe or decorative element at the lower edge or corner. ONLY use these exact three colors: #FFFFFF, #1162A2, #E2001F. No other colors allowed whatsoever. No patterns, no textures, no objects, and absolutely no text or typography. Keep it minimal with clean, sophisticated gradients. The red adds a professional accent touch.`,
     
-    // Cream base with yellow and red geometric accents at edges
-    `Create a minimal, modern background in warm cream (#FFF3D9) as the main color, with golden yellow (#FEC736) and red (#CB1F35) geometric accent shapes or curves ONLY at the lower left corner, lower right corner, or bottom edge. ONLY use these exact three colors: cream #FFF3D9, yellow #FEC736, red #CB1F35. Absolutely NO other colors. No patterns in the main area, no textures, no objects, no text, no letters. The accent design should be simple - minimal waves, curves, or geometric shapes. Professional, elegant, and brand-compliant.`,
+    // White base with teal and red geometric accents at edges
+    `Create a minimal, modern background in clean white (#FFFFFF) as the main color, with teal (#1162A2) and red (#E2001F) geometric accent shapes or curves ONLY at the lower left corner, lower right corner, or bottom edge. ONLY use these exact three colors: white #FFFFFF, teal #1162A2, red #E2001F. Absolutely NO other colors. No patterns in the main area, no textures, no objects, no text, no letters. The accent design should be simple - minimal waves, curves, or geometric shapes. Professional, elegant, and brand-compliant.`,
   ];
 }
 
@@ -64,9 +64,9 @@ export async function POST(req: NextRequest) {
       const enhancedCustomPrompt = `Create a background image based on: ${customPrompt}. 
       
 STRICT COLOR REQUIREMENTS - ONLY use these exact three brand colors:
-- Cream: #FFF3D9
-- Golden Yellow: #FEC736  
-- Red: #CB1F35
+- White: #FFFFFF
+- Teal: #1162A2  
+- Red: #E2001F
 
 NO other colors allowed whatsoever. The background should be elegant and professional.
 No text, no letters, no words, no typography, no complex objects, no people.
