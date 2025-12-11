@@ -149,7 +149,7 @@ Requirements:
 - The image should be a single, clear focal point object or character
 - Isolated on a pure white or transparent background
 - No background elements, scenery, or environment
-- Use brand accent colors #FEC736 (golden yellow) and #CB1F35 (vibrant red) where appropriate
+- Use brand accent colors #1162A2 blue color and #CB1F35 (vibrant red) where appropriate
 - Make it visually appealing and professional
 - ABSOLUTELY NO text, letters, numbers, words, or typography in the image`;
     } else if (briefContent) {
@@ -167,7 +167,7 @@ Requirements:
 - The image should be a single, clear focal point object or character
 - Isolated on a pure white or transparent background
 - No background elements, scenery, or environment
-- Use brand accent colors #FEC736 (golden yellow) and #CB1F35 (vibrant red) where appropriate
+- Use brand accent colors #1162A2 blue color and #CB1F35 (vibrant red) where appropriate
 - Make it visually appealing and professional for a ${deptContext} campaign
 - The image should immediately convey the concept of "${subject}"
 - ABSOLUTELY NO text, letters, numbers, words, or typography in the image`;
@@ -179,7 +179,7 @@ Requirements:
 - Style: Clean vector clipart OR hyper-realistic 3D render
 - Single clear focal point, isolated on white background
 - No background elements or scenery
-- Use brand colors #FEC736 (yellow) and #CB1F35 (red) as accents
+- Use brand colors #1162A2 blue color and #CB1F35 (red) as accents
 - Professional and suitable for ${department || 'business'} marketing
 - ABSOLUTELY NO text, letters, or typography in the image`;
     }
